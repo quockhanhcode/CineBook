@@ -41,3 +41,13 @@ export const movie_info = async (maPhim) => {
     console.log(error);
   }
 };
+export const ticket_detail = async (maLichChieu) => {
+  try {
+    const response = await api.get(
+      `/QuanLyDatVe/LayDanhSachPhongVe?MaLichChieu=${maLichChieu}`
+    );
+    return response.data.content;
+  } catch (error) {
+    console.log(error);
+  }
+};
