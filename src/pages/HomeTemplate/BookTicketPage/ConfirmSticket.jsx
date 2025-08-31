@@ -7,14 +7,6 @@ export default function ConfirmSticket(props) {
   const dispatch = useDispatch();
   const { chair } = useSelector((state) => state.bookingSlice);
   const [ghe, setGhe] = useState([]);
-  console.log(chair);
-
-  // useEffect(() => {
-  //   return chair.map((item) => {
-  //     setGhe(item.tenGhe);
-  //     return item;
-  //   });
-  // }, [chair]);
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg space-y-4 lg:col-span-3">
