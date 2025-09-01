@@ -62,9 +62,7 @@ export default function ConfirmSticket(props) {
             <span>Ghế ngồi</span>
           </div>
           <span className="font-semibold text-blue-900">
-            {chair.map((item) => {
-              return <span key={item.tenGhe}>{item.tenGhe} , </span>;
-            })}
+            {chair.map((item) => item.tenGhe).join(", ")}
           </span>
         </div>
         <button

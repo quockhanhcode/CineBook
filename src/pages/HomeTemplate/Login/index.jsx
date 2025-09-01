@@ -1,6 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
+import api from "../../../service/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const [values, setValue] = useState({
+    taiKhoan: "",
+    matKhau: "",
+  });
+  const navigate = useNavigate();
+
+  const handleOnchange = (e) => {
+    setValue({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/QuanLyNguoiDung/DangNhap", values);
+      const user = response.data.content;
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        user.maLoaiNguoiDung === "QuanTri"
+          ? navigate("/admin/dashboard")
+          : navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
       <div className="bg-white rounded-lg shadow-lg flex w-full max-w-5xl overflow-hidden">
@@ -57,15 +86,20 @@ export default function Login() {
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <input
-              type="email"
+              onChange={handleOnchange}
               placeholder="Tài Khoản"
+              name="taiKhoan"
+              value={values.taiKhoan}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
+              onChange={handleOnchange}
               type="password"
               placeholder="Mật Khẩu"
+              name="matKhau"
+              value={values.matKhau}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 

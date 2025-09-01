@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,6 +8,15 @@ export default function Modal(props) {
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const { chair } = useSelector((state) => state.bookingSlice);
   const dispatch = useDispatch();
+
+  const totalPay = chair.reduce((acc, curr) => {
+    return acc + curr.giaVe;
+  }, 0);
+
+  const handlePay = () => {
+    dispatch(setOpenPopup(false));
+    console.log(isOpenPopup);
+  };
 
   return (
     <Transition appear show={isOpenPopup} as={Fragment}>
@@ -84,20 +93,24 @@ export default function Modal(props) {
                     <div className="flex justify-between border-b border-gray-700 pb-2">
                       <span className="text-purple-400">Ghế ngồi</span>
                       <span className="text-white">
-                        {chair.map((item) => {
-                          return (
-                            <span key={item.tenGhe}>{item.tenGhe} , </span>
-                          );
-                        })}
+                        {chair.map((item) => item.tenGhe).join(", ")}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-purple-400">Giá vé</span>
-                      <span className="text-white">111111111111</span>
+                      <span className="text-white">
+                        {totalPay.toLocaleString("vi", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </span>
                     </div>
                   </div>
-                  <button className="mt-6 w-full bg-gradient-to-r bg-[#E82E96] to-purple-900 hover:from-purple-700 hover:to-purple-800 text-white py-2 rounded-md transition duration-300">
-                    Xác nhận &amp; Thanh toán
+                  <button
+                    onClick={handlePay}
+                    className="cursor-pointer mt-6 w-full bg-gradient-to-r bg-[#E82E96] to-purple-900 hover:from-purple-700 hover:to-purple-800 text-white py-2 rounded-md transition duration-300"
+                  >
+                    Xác nhận & Thanh toán
                   </button>
                 </div>
               </Dialog.Panel>
