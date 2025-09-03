@@ -2,9 +2,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { booking_sticket } from "../../../service/movie.api";
 
 export default function Modal(props) {
   const { movie } = props;
+  const queryClient = useQueryClient();
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const { chair } = useSelector((state) => state.bookingSlice);
   const dispatch = useDispatch();
@@ -13,9 +20,32 @@ export default function Modal(props) {
     return acc + curr.giaVe;
   }, 0);
 
+  const { mutate, isLoading, isError, isSuccess, error } = useMutation({
+    mutationFn: booking_sticket,
+    onSuccess: () => {
+      // Invalidate or update related queries after a successful mutation
+      queryClient.invalidateQueries({
+        queryKey: ["ticket-detail", movie?.thongTinPhim.maLichChieu],
+      });
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    },
+  });
+
   const handlePay = () => {
     dispatch(setOpenPopup(false));
-    console.log(isOpenPopup);
+    const danhSachVe = chair.map((item) => {
+      return {
+        maGhe: item.maGhe,
+        giaVe: item.giaVe,
+      };
+    });
+    const payload = {
+      maLichChieu: movie?.thongTinPhim.maLichChieu,
+      danhSachVe: danhSachVe,
+    };
+    mutate(payload);
   };
 
   return (

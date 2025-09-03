@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { useParams } from "react-router-dom";
 import { ticket_detail } from "../../../service/movie.api";

@@ -49,5 +49,15 @@ export const ticket_detail = async (maLichChieu) => {
     return response.data.content;
   } catch (error) {
     console.log(error);
+    return null;
+  }
+};
+
+export const booking_sticket = async (thongTinDatVe) => {
+  try {
+    const response = await api.post("/QuanLyDatVe/DatVe", thongTinDatVe);
+    return response.data.content;
+  } catch (error) {
+    console.log(error);
   }
 };
