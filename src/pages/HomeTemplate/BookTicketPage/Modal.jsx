@@ -8,9 +8,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { booking_sticket } from "../../../service/movie.api";
+import { useParams } from "react-router-dom";
+import { resetTicket } from "../../../store/bookingSlice";
 
 export default function Modal(props) {
   const { movie } = props;
+  const { maLichChieu } = useParams();
+
   const queryClient = useQueryClient();
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const { chair } = useSelector((state) => state.bookingSlice);
@@ -25,8 +29,9 @@ export default function Modal(props) {
     onSuccess: () => {
       // Invalidate or update related queries after a successful mutation
       queryClient.invalidateQueries({
-        queryKey: ["ticket-detail", movie?.thongTinPhim.maLichChieu],
+        queryKey: ["ticket-detail", maLichChieu],
       });
+      dispatch(resetTicket());
     },
     onError: (error) => {
       console.error("Mutation error:", error);

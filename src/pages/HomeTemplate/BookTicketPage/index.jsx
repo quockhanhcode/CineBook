@@ -10,6 +10,8 @@ import Modal from "./Modal";
 
 export default function BookTicketPage() {
   const { chair } = useSelector((state) => state.bookingSlice);
+  console.log(chair);
+
   const dispatch = useDispatch();
   const { maLichChieu } = useParams();
 
@@ -41,6 +43,7 @@ export default function BookTicketPage() {
           <div className=" bg-gray-900 flex items-center justify-center">
             <div className="flex flex-wrap items-center gap-2 mb-4 text-sm">
               {movie?.danhSachGhe.map((item) => {
+                const isSelected = chair.some((c) => c.maGhe === item.maGhe);
                 const seatClass = `${
                   item.daDat
                     ? "bg-gray-300"
@@ -56,13 +59,16 @@ export default function BookTicketPage() {
                     }`}
                   >
                     <input
+                      checked={isSelected}
                       type="checkbox"
                       disabled={item.daDat === true}
                       className="hidden peer"
                       onChange={() => handleAddChair(item)}
                     />
                     <span
-                      className={`absolute inset-0 flex items-center rounded-sm justify-center peer-checked:bg-pink-400 peer-checked:text-white`}
+                      className={`absolute inset-0 flex items-center rounded-sm justify-center peer-checked:bg-pink-400 peer-checked:text-white ${
+                        isSelected ? "bg-purple-600" : ""
+                      }`}
                     >
                       {item.tenGhe}
                     </span>

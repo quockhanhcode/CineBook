@@ -19,10 +19,13 @@ export const bookingSlice = createSlice({
       }
       state.chair = [...state.chair, { ...action.payload, daDat: true }];
     },
+    resetTicket: (state, action) => {
+      state.chair = [];
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addTicket } = bookingSlice.actions;
+export const { addTicket, resetTicket } = bookingSlice.actions;
 
 export default bookingSlice.reducer;
