@@ -10,7 +10,6 @@ import Modal from "./Modal";
 
 export default function BookTicketPage() {
   const { chair } = useSelector((state) => state.bookingSlice);
-  console.log(chair);
 
   const dispatch = useDispatch();
   const { maLichChieu } = useParams();

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import api from "../../../service/api";
 import { useNavigate } from "react-router-dom";
+import { QueryClient, useMutation } from "@tanstack/react-query";
+import { loginApi } from "../../../service/login.api";
 
 export default function Login() {
   const [values, setValue] = useState({
     taiKhoan: "",
     matKhau: "",
   });
+  const queryClient = new QueryClient();
   const navigate = useNavigate();
 
   const handleOnchange = (e) => {
@@ -15,20 +17,24 @@ export default function Login() {
       [e.target.name]: e.target.value,
     });
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await api.post("/QuanLyNguoiDung/DangNhap", values);
-      const user = response.data.content;
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-        user.maLoaiNguoiDung === "QuanTri"
+  const { mutate, isLoading, isError, isSuccess, data, error } = useMutation({
+    mutationFn: loginApi,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["loginAPI"]);
+      if (data) {
+        localStorage.setItem("user", JSON.stringify(data));
+        data.maLoaiNguoiDung === "QuanTri"
           ? navigate("/admin/dashboard")
           : navigate("/");
       }
-    } catch (error) {
-      console.log(error);
-    }
+    },
+    onError: (error) => {
+      console.error("Form submission error:", error);
+    },
+  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    mutate(values);
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
