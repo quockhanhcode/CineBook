@@ -1,71 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../../../../store/auth.slice";
+import { useNavigate } from "react-router-dom";
 
 export default function Avatar() {
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(clearUser());
+    navigate("/login");
+  };
+
   return (
     <div>
-      <button
+      <img
+        onClick={() => setOpen(!open)}
+        id="avatarButton"
         type="button"
-        className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-        id="user-menu-button"
-        aria-expanded="false"
-        data-dropdown-toggle="user-dropdown"
-        data-dropdown-placement="bottom"
-      >
-        <span className="sr-only">Open user menu</span>
-        <img
-          className="w-8 h-8 rounded-full"
-          src="/docs/images/people/profile-picture-3.jpg"
-          alt="user photo"
-        />
-      </button>
-      {/* Dropdown menu */}
-      <div
-        className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-        id="user-dropdown"
-      >
-        <div className="px-4 py-3">
-          <span className="block text-sm text-gray-900 dark:text-white">
-            Bonnie Green
-          </span>
-          <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-            name@flowbite.com
-          </span>
-        </div>
-        <ul className="py-2" aria-labelledby="user-menu-button">
-          <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Settings
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Earnings
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+        className="w-10 h-10 rounded-full cursor-pointer"
+        src="https://www.svgrepo.com/show/382102/male-avatar-boy-face-man-user-8.svg"
+        alt="User dropdown"
+      />
+      {open && (
+        <div className="absolute right-0 mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+          <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+            <div>Bonnie Green</div>
+            <div className="font-medium truncate">name@flowbite.com</div>
+          </div>
+          <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+            <li>
+              <a className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                Settings
+              </a>
+            </li>
+            <li>
+              <a className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                Earnings
+              </a>
+            </li>
+          </ul>
+          <div className="py-1">
+            <button
+              onClick={handleLogout}
+              className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
             >
               Sign out
-            </a>
-          </li>
-        </ul>
-      </div>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

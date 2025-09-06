@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QueryClient, useMutation } from "@tanstack/react-query";
 import { loginApi } from "../../../service/login.api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../../store/auth.slice";
 
 export default function Login() {
   const [values, setValue] = useState({
@@ -10,6 +12,7 @@ export default function Login() {
   });
   const queryClient = new QueryClient();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleOnchange = (e) => {
     setValue({
@@ -17,13 +20,21 @@ export default function Login() {
       [e.target.name]: e.target.value,
     });
   };
-  const { mutate, isLoading, isError, isSuccess, data, error } = useMutation({
+  const {
+    mutate,
+    isLoading,
+    isError,
+    isSuccess,
+    data: user,
+    error,
+  } = useMutation({
     mutationFn: loginApi,
-    onSuccess: (data) => {
+    onSuccess: (user) => {
       queryClient.invalidateQueries(["loginAPI"]);
-      if (data) {
-        localStorage.setItem("user", JSON.stringify(data));
-        data.maLoaiNguoiDung === "QuanTri"
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        dispatch(setUser(user));
+        user.maLoaiNguoiDung === "QuanTri"
           ? navigate("/admin/dashboard")
           : navigate("/");
       }

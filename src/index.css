@@ -6,14 +6,13 @@
     --breakpoint-sp375: 375px;
 }
 
-
 :root {
     --header: 65px;
     --mainColor: #d42a87;
     --black: #333;
 }
 
-*{
+* {
     box-sizing: border-box;
 }
 
@@ -27,14 +26,13 @@
     --tw-aspect-w: 7;
 }
 
-.aspect-h-10{
+.aspect-h-10 {
     --tw-aspect-h: 10;
 }
-.inner{
+.inner {
     max-width: 1310px;
 }
 
-
-.cenima-swiper .swiper-slide{
+.cenima-swiper .swiper-slide {
     width: auto;
 }

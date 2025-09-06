@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { store } from "./store";
 import { Provider } from "react-redux";
+import "flowbite";
 
 import "swiper/css";
 import "swiper/css/effect-fade";

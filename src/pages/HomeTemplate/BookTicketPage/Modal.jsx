@@ -128,7 +128,7 @@ export default function Modal(props) {
                     <div className="flex justify-between border-b border-gray-700 pb-2">
                       <span className="text-purple-400">Ghế ngồi</span>
                       <span className="text-white">
-                        {chair.map((item) => item.tenGhe).join(", ")}
+                        {chair.map((item) => item.tenGhe).join("-")}
                       </span>
                     </div>
                     <div className="flex justify-between">
