@@ -3,10 +3,17 @@ import { Film, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { Dialog, DialogPanel } from "@headlessui/react";
+import { useForm } from "react-hook-form";
 
 export default function AddMovie() {
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data) => console.log(data);
+
+  const handleClose = () => {
+    dispatch(setOpenPopup(false));
+  };
   return (
     <div>
       <Dialog
@@ -35,118 +42,53 @@ export default function AddMovie() {
                 </div>
 
                 <div className="absolute inset-y-0 right-4 h-fit my-auto cursor-pointer p-2 hover:text-[var(--mainColor)]">
-                  <X className="w-6 h-6" />
+                  <X onClick={handleClose} className="w-6 h-6" />
                 </div>
               </div>
 
               <div className="p-6">
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="grid gap-6 mb-6 md:grid-cols-2">
                     <div>
                       <label
-                        htmlFor="movie_name"
+                        htmlFor="visitors"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Thêm phim
+                        Mã Phim
                       </label>
                       <input
-                        type="text"
-                        id="movie_name"
+                        {...register("maPhim")}
+                        disabled
+                        placeholder="GP01"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Nhập tên phim..."
-                        required
                       />
                     </div>
                     <div>
                       <label
-                        htmlFor="last_name"
+                        htmlFor="Tên Phim"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Poster
-                      </label>
-                      <div className="flex items-center justify-center w-full">
-                        <label
-                          htmlFor="dropzone-file"
-                          className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                        >
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg
-                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 20 16"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                              />
-                            </svg>
-                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold">
-                                Nhấp để tải ảnh
-                              </span>{" "}
-                              kéo hoặc thả
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              SVG, PNG or JPG (MAX. 400x800px)
-                            </p>
-                          </div>
-                          <input
-                            id="dropzone-file"
-                            type="file"
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="last_name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Last name
+                        Tên Phim
                       </label>
                       <input
+                        {...register("tenPhim")}
                         type="text"
-                        id="last_name"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Doe"
-                        required
+                        placeholder="Tên Phim..."
                       />
                     </div>
                     <div>
                       <label
-                        htmlFor="company"
+                        htmlFor="Trailer"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Company
+                        Trailer
                       </label>
                       <input
+                        {...register("trailer")}
                         type="text"
-                        id="company"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Flowbite"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="phone"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Phone number
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="123-45-678"
-                        pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                        required
                       />
                     </div>
                     <div>
@@ -154,113 +96,128 @@ export default function AddMovie() {
                         htmlFor="website"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Website URL
+                        Đánh giá
                       </label>
                       <input
-                        type="url"
-                        id="website"
+                        {...register("danhGia")}
+                        type="number"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="flowbite.com"
-                        required
+                        placeholder="Đánh giá"
                       />
                     </div>
                     <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Mô tả
+                      </label>
+                      <textarea
+                        {...register("moTa")}
+                        rows={4}
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Write your thoughts here..."
+                        defaultValue={""}
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Ngày Khởi Chiếu
+                      </label>
+                      <div className="relative max-w-sm">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                          <svg
+                            className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                          </svg>
+                        </div>
+                        <input
+                          {...register("ngayKhoiChieu")}
+                          datepicker
+                          id="default-datepicker"
+                          type="date"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Select date"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col space-y-3.5">
+                      <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          defaultValue
+                          className="sr-only peer"
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600" />
+                        <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          Hot
+                        </span>
+                      </label>
+                      <label className="inline-flex flex-col cursor-pointer">
+                        <span className="text-sm mb-3.5 font-medium text-gray-900 dark:text-gray-300">
+                          Tình Trạng
+                        </span>
+                        <div className="space-y-2.5">
+                          <div className="flex items-center ps-4 border border-gray-200 rounded-sm dark:border-gray-700">
+                            <input
+                              id="bordered-radio-1"
+                              type="radio"
+                              defaultChecked
+                              defaultValue
+                              name="bordered-radio"
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor="bordered-radio-1"
+                              className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              Sắp Chiếu
+                            </label>
+                          </div>
+                          <div className="flex items-center ps-4 border border-gray-200 rounded-sm dark:border-gray-700">
+                            <input
+                              id="bordered-radio-2"
+                              type="radio"
+                              defaultValue
+                              name="bordered-radio"
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor="bordered-radio-2"
+                              className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              Đang Chiếu
+                            </label>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="mb-2.5">
+                    <div>
                       <label
-                        htmlFor="visitors"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        htmlFor="file_input"
                       >
-                        Unique visitors (per month)
+                        Hình Ảnh
                       </label>
                       <input
-                        type="number"
-                        id="visitors"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder
-                        required
+                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="file_input"
+                        type="file"
                       />
                     </div>
-                  </div>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="email"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Email address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="john.doe@company.com"
-                      required
-                    />
-                  </div>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="password"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      id="password"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="•••••••••"
-                      required
-                    />
-                  </div>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="confirm_password"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Confirm password
-                    </label>
-                    <input
-                      type="password"
-                      id="confirm_password"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="•••••••••"
-                      required
-                    />
-                  </div>
-                  <div className="flex items-start mb-6">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        type="checkbox"
-                        defaultValue
-                        className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-                        required
-                      />
-                    </div>
-                    <label
-                      htmlFor="remember"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      I agree with the
-                      <a
-                        href="#"
-                        className="text-blue-600 hover:underline dark:text-blue-500"
-                      >
-                        terms and conditions
-                      </a>
-                      .
-                    </label>
                   </div>
                   <button
                     type="submit"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
-                    Submit
+                    Xác Nhận
                   </button>
                 </form>
               </div>
-
-              <button className="inline-flex items-center gap-2 rounded-md bg-gray-700 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700">
-                Hủy bỏ
-              </button>
             </DialogPanel>
           </div>
         </div>

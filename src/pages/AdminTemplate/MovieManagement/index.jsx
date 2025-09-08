@@ -1,26 +1,34 @@
 import { Eye, Star, SquarePen, Trash2, Plus } from "lucide-react";
 
 import PaginationCustom from "../../HomeTemplate/_components/PaginationCustom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setOpenPopup } from "../../../store/homeSlice";
 import AddMovie from "./AddMovie";
+import { getListMovieApi } from "../../../service/movie.api";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { useState } from "react";
 
 export default function MovieManagement() {
-  const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const {
+    data: movie,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["listMovie", page],
+    queryFn: () => getListMovieApi("GP01", page, limit),
+    keepPreviousData: true,
+  });
 
-  // let [isOpen, setIsOpen] = useState(false);
+  const totalPages = Math.ceil(movie?.totalCount / limit);
 
-  // function open() {
-  //   setIsOpen(true);
-  // }
-
-  // function close() {
-  //   setIsOpen(false);
-  // }
   return (
     <>
-      <div className="p-6 lg:p-8 xl:p-10 border border-[#eee] rounded-xl shadow-sm ">
+      <div className="p-4 lg:p-4 xl:p-4 border border-[#eee] rounded-xl shadow-sm ">
         <div className="flex justify-between">
           <div className="block w-[300px] lg:w-sm">
             <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-5 lg:mb-8">
@@ -69,124 +77,77 @@ export default function MovieManagement() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b  border-gray-200 hover:bg-gray-50 ">
-                  <td className="px-6 py-4 pr-2">
-                    <img
-                      className="w-18 object-cover object-center"
-                      src="https://image-worker.momocdn.net/img/89520077420501400-conannn.png?size=M&referer=cinema.momocdn.net"
-                      alt="Thám Tử Lừng Danh Conan: Dư Ảnh Của Độc "
-                    />
-                  </td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 "
-                  >
-                    <p className="line-clamp-1">Apple MacBook Pro 17"</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star className="text-yellow-400 w-5" />
-                      <span className="font-semibold text-black">8.8</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-500 text-center">10/10/2024</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto ">
-                      Đang chiếu
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-center gap-3">
-                      <Eye className="text-blue-500 w-5 cursor-pointer hover:text-blue-800 transition-all duration-300" />
-                      <SquarePen className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300" />
-                      <Trash2 className="text-red-500 w-5 cursor-pointer hover:text-red-800 transition-all duration-300" />
-                    </div>
-                  </td>
-                </tr>
-                <tr className="bg-white border-b  border-gray-200 hover:bg-gray-50 ">
-                  <td className="px-6 py-4 pr-2">
-                    <img
-                      className="w-18 object-cover object-center"
-                      src="https://image-worker.momocdn.net/img/89520077420501400-conannn.png?size=M&referer=cinema.momocdn.net"
-                      alt="Thám Tử Lừng Danh Conan: Dư Ảnh Của Độc "
-                    />
-                  </td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900"
-                  >
-                    <p className="line-clamp-1">Apple MacBook Pro 17"</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star className="text-yellow-400 w-5" />
-                      <span className="font-semibold text-black">8.8</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-500 text-center">10/10/2024</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto">
-                      Sắp chiếu
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-center gap-3">
-                      <Eye className="text-blue-500 w-5 cursor-pointer hover:text-blue-800 transition-all duration-300" />
-                      <SquarePen className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300" />
-                      <Trash2 className="text-red-500 w-5 cursor-pointer hover:text-red-800 transition-all duration-300" />
-                    </div>
-                  </td>
-                </tr>
-                <tr className="bg-white border-b  border-gray-200 hover:bg-gray-50 ">
-                  <td className="px-6 py-4 pr-2">
-                    <img
-                      className="w-18 object-cover object-center"
-                      src="https://image-worker.momocdn.net/img/89520077420501400-conannn.png?size=M&referer=cinema.momocdn.net"
-                      alt="Thám Tử Lừng Danh Conan: Dư Ảnh Của Độc "
-                    />
-                  </td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900"
-                  >
-                    <p className="line-clamp-1">Apple MacBook Pro 17"</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star className="text-yellow-400 w-5" />
-                      <span className="font-semibold text-black">8.8</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-500 text-center">10/10/2024</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto ">
-                      Đang chiếu
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-center gap-3">
-                      <Eye className="text-blue-500 w-5 cursor-pointer hover:text-blue-800 transition-all duration-300" />
-                      <SquarePen className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300" />
-                      <Trash2 className="text-red-500 w-5 cursor-pointer hover:text-red-800 transition-all duration-300" />
-                    </div>
-                  </td>
-                </tr>
+                {movie &&
+                  movie.items.length > 0 &&
+                  movie.items.map((item) => {
+                    return (
+                      <tr
+                        key={item.maPhim}
+                        className="bg-white border-b  border-gray-200 hover:bg-gray-50 "
+                      >
+                        <td className="px-6 py-4 pr-2">
+                          <img
+                            className="w-18 object-cover object-center"
+                            src={item.hinhAnh}
+                            alt={item.tenPhim}
+                          />
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-6 py-4 font-medium text-gray-900 "
+                        >
+                          <p className="line-clamp-1">{item.tenPhim}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-center gap-1">
+                            <Star className="text-yellow-400 w-5" />
+                            <span className="font-semibold text-black">
+                              {item.danhGia}/10
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-gray-500 text-center">
+                            {format(item.ngayKhoiChieu, "MM/dd/yyyy")}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={` text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto ${
+                              item.dangChieu === true
+                                ? "bg-green-100 text-green-800"
+                                : "bg-[#FCB53B] text-white"
+                            }`}
+                          >
+                            {item.dangChieu === true
+                              ? "Đang Chiếu"
+                              : "Sắp Chiếu"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-center gap-3">
+                            <Eye className="text-blue-500 w-5 cursor-pointer hover:text-blue-800 transition-all duration-300" />
+                            <SquarePen className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300" />
+                            <Trash2 className="text-red-500 w-5 cursor-pointer hover:text-red-800 transition-all duration-300" />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
           <div className="flex items-center justify-between flex-col gap-3 lg:flex-row px-6 py-5">
             <p className="text-gray-500 text-sm text-center">
-              Hiển thị 10 phim mỗi trang{" "}
+              Hiển thị {limit} phim mỗi trang{" "}
               <span className="sm:inline-block hidden">-</span>{" "}
               <br className="sm:hidden" /> Tổng cộng 50 phim
             </p>
-            <PaginationCustom />
+            <PaginationCustom
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(p) => setPage(p)}
+            />
           </div>
         </div>
       </div>
