@@ -8,12 +8,45 @@ import { useForm } from "react-hook-form";
 export default function AddMovie() {
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
-
-  const handleClose = () => {
-    dispatch(setOpenPopup(false));
+  const {
+    register,
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      maNhom: "GP01",
+      tenPhim: "",
+      trailer: "",
+      moTa: "",
+      ngayKhoiChieu: "",
+      trangThai: false,
+      Hot: false,
+      danhGia: "",
+      hinhAnh: null,
+    },
+  });
+  const hinhAnh = watch("hinhAnh");
+  const previewImage = (file) => {
+    if (!file) return "";
+    const url = URL.createObjectURL(file);
+    return url;
   };
+
+  const onSubmit = (values) => {
+    const { trangThai, Hot, ...rest } = values;
+    const newValues = {
+      ...rest,
+      dangChieu: trangThai === "true",
+      sapChieu: trangThai === "false",
+      Hot: Hot === true,
+    };
+
+    // const formData = new FormData();
+    // formData.append("maNhom", maNhom);
+  };
+
   return (
     <div>
       <Dialog
@@ -22,8 +55,8 @@ export default function AddMovie() {
         className="focus:outline-none"
         onClose={() => dispatch(setOpenPopup(false))}
       >
-        <div className="fixed z-[999] inset-0 flex w-screen items-center justify-center p-4 bg-[#0009]">
-          <div className="flex min-h-full items-center justify-center p-4">
+        <div className="fixed z-[999] inset-0 flex w-screen items-center justify-center p-4 bg-[#0009] overflow-scroll">
+          <div className="flex w-full items-center justify-center p-4">
             <DialogPanel
               transition
               className=" w-6xl rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
@@ -42,7 +75,10 @@ export default function AddMovie() {
                 </div>
 
                 <div className="absolute inset-y-0 right-4 h-fit my-auto cursor-pointer p-2 hover:text-[var(--mainColor)]">
-                  <X onClick={handleClose} className="w-6 h-6" />
+                  <X
+                    onClick={() => dispatch(setOpenPopup(false))}
+                    className="w-6 h-6"
+                  />
                 </div>
               </div>
 
@@ -54,10 +90,10 @@ export default function AddMovie() {
                         htmlFor="visitors"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Mã Phim
+                        Mã Nhóm Phim
                       </label>
                       <input
-                        {...register("maPhim")}
+                        {...register("maNhom")}
                         disabled
                         placeholder="GP01"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -135,7 +171,6 @@ export default function AddMovie() {
                         </div>
                         <input
                           {...register("ngayKhoiChieu")}
-                          datepicker
                           id="default-datepicker"
                           type="date"
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -162,11 +197,10 @@ export default function AddMovie() {
                         <div className="space-y-2.5">
                           <div className="flex items-center ps-4 border border-gray-200 rounded-sm dark:border-gray-700">
                             <input
-                              id="bordered-radio-1"
                               type="radio"
                               defaultChecked
-                              defaultValue
-                              name="bordered-radio"
+                              {...register("trangThai")}
+                              name="trangThai"
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
                             <label
@@ -178,10 +212,9 @@ export default function AddMovie() {
                           </div>
                           <div className="flex items-center ps-4 border border-gray-200 rounded-sm dark:border-gray-700">
                             <input
-                              id="bordered-radio-2"
                               type="radio"
-                              defaultValue
-                              name="bordered-radio"
+                              {...register("trangThai")}
+                              name="trangThai"
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
                             <label
@@ -204,11 +237,44 @@ export default function AddMovie() {
                         Hình Ảnh
                       </label>
                       <input
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setValue("hinhAnh", file);
+                        }}
                         className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                        id="file_input"
                         type="file"
+                        accept=".png,jpeg,.jpg"
                       />
                     </div>
+                    {hinhAnh && (
+                      <div className="relative mt-6 w-[25rem] h-auto max-w-full rounded-lg">
+                        <img
+                          src={previewImage(hinhAnh)}
+                          className="w-full h-full"
+                          alt="preview"
+                        />
+                        <div
+                          onClick={() => setValue("hinhAnh", null)}
+                          className="absolute top-[-15px] right-[-15px]"
+                        >
+                          <svg
+                            className="w-[30px] h-[30px] text-red-600 dark:text-white cursor-pointer"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <button
                     type="submit"
