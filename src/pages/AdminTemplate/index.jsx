@@ -1,7 +1,16 @@
-import { Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import { clearUser } from "../../store/auth.slice";
 
 export default function AdminTemplate() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(clearUser());
+    navigate("/login");
+  };
   return (
     <div>
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 ">
@@ -53,31 +62,27 @@ export default function AdminTemplate() {
                   </div>
                   <ul className="py-1" role="none">
                     <li>
-                      <a
+                      <Link
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
                         role="menuitem"
                       >
                         Bảng điều khiển
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
                         role="menuitem"
                       >
                         Cài đặt
-                      </a>
+                      </Link>
                     </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
-                        role="menuitem"
-                      >
+                    <li className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">
+                      <button onClick={handleLogout} role="menuitem">
                         Đăng xuất
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </div>

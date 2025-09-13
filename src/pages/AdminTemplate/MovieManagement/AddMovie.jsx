@@ -1,50 +1,74 @@
-import React from "react";
 import { Film, X } from "lucide-react";
+import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { useForm } from "react-hook-form";
+import api from "../../../service/api";
 
 export default function AddMovie() {
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
-  const {
-    register,
-    setValue,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { register, setValue, watch, handleSubmit } = useForm({
     defaultValues: {
-      maNhom: "GP01",
       tenPhim: "",
       trailer: "",
       moTa: "",
-      ngayKhoiChieu: "",
+      maNhom: "GP02",
+      ngayKhoiChieu: null,
       trangThai: false,
       Hot: false,
       danhGia: "",
       hinhAnh: null,
+      // dangChieu: true,
+      // sapChieu: false,
     },
   });
   const hinhAnh = watch("hinhAnh");
+
   const previewImage = (file) => {
     if (!file) return "";
     const url = URL.createObjectURL(file);
     return url;
   };
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     const { trangThai, Hot, ...rest } = values;
     const newValues = {
       ...rest,
-      dangChieu: trangThai === "true",
-      sapChieu: trangThai === "false",
-      Hot: Hot === true,
+      SapChieu: trangThai === "false",
+      DangChieu: trangThai === "true",
+      Hot: Hot === "true",
     };
 
-    // const formData = new FormData();
-    // formData.append("maNhom", maNhom);
+    console.log("newValues", newValues);
+
+    const formData = new FormData();
+    formData.append("tenPhim", newValues.tenPhim);
+    formData.append("trailer", newValues.trailer);
+    formData.append("moTa", newValues.moTa);
+    formData.append("danhGia", newValues.danhGia);
+    formData.append("SapChieu", newValues.SapChieu);
+    formData.append("DangChieu", newValues.DangChieu);
+    formData.append(
+      "ngayKhoiChieu",
+      format(newValues.ngayKhoiChieu, "dd/MM/yyyy")
+    );
+
+    formData.append("maNhom", newValues.maNhom);
+    formData.append("Hot", newValues.Hot);
+    if (newValues.hinhAnh) {
+      formData.append("hinhAnh", newValues.hinhAnh);
+    }
+    try {
+      const response = await api.post(
+        "/QuanLyPhim/ThemPhimUploadHinh",
+        formData
+      );
+      console.log("Upload thành công:", response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -184,6 +208,7 @@ export default function AddMovie() {
                           type="checkbox"
                           defaultValue
                           className="sr-only peer"
+                          {...register("Hot")}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600" />
                         <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -198,9 +223,10 @@ export default function AddMovie() {
                           <div className="flex items-center ps-4 border border-gray-200 rounded-sm dark:border-gray-700">
                             <input
                               type="radio"
-                              defaultChecked
                               {...register("trangThai")}
                               name="trangThai"
+                              defaultValue
+                              defaultChecked
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
                             <label
@@ -215,6 +241,7 @@ export default function AddMovie() {
                               type="radio"
                               {...register("trangThai")}
                               name="trangThai"
+                              defaultValue
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
                             <label
@@ -237,13 +264,14 @@ export default function AddMovie() {
                         Hình Ảnh
                       </label>
                       <input
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          setValue("hinhAnh", file);
+                        type="file"
+                        accept=".png, .jpg, .jpeg, .gif"
+                        name="hinhAnh"
+                        onChange={(events) => {
+                          const hinhAnh = events.target.files[0];
+                          setValue("hinhAnh", hinhAnh);
                         }}
                         className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                        type="file"
-                        accept=".png,jpeg,.jpg"
                       />
                     </div>
                     {hinhAnh && (
