@@ -4,26 +4,57 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { useForm } from "react-hook-form";
-import api from "../../../service/api";
+import { addMovies } from "../../../service/admin.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+  tenPhim: z.string().nonempty("Vui lòng nhập thông tin"),
+  trailer: z
+    .string()
+    .nonempty("Vui lòng nhập thông tin")
+    .regex(
+      /[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&=]*)/gi,
+      "Vui lòng nhập đúng định dạng"
+    ),
+  moTa: z
+    .string()
+    .nonempty("Vui lòng nhập thông tin")
+    .max(500, "Nội dung vượt quá kí tự"),
+  ngayKhoiChieu: z.string().nonempty("Không được bỏ trống"),
+  trangThai: z.string().optional(),
+  maNhom: z.string().optional("GP03"),
+  danhGia: z
+    .string()
+    .nonempty("Không được bỏ trống")
+    .regex(/^(10|[1-9])$/gm, "Nhập đúng định dạng"),
+  hinhAnh: z.any(),
+});
 
 export default function AddMovie() {
+  const queryClient = useQueryClient();
+
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
-  const { register, setValue, watch, handleSubmit } = useForm({
+  const { register, setValue, watch, handleSubmit, formState } = useForm({
     defaultValues: {
       tenPhim: "",
       trailer: "",
       moTa: "",
-      maNhom: "GP02",
-      ngayKhoiChieu: null,
+      maNhom: "GP03",
+      ngayKhoiChieu: "",
       trangThai: false,
-      Hot: false,
+      hot: false,
       danhGia: "",
       hinhAnh: null,
-      // dangChieu: true,
-      // sapChieu: false,
     },
+    resolver: zodResolver(schema),
   });
+
+  const errors = formState.errors;
+  console.log("errors", errors);
+
   const hinhAnh = watch("hinhAnh");
 
   const previewImage = (file) => {
@@ -32,43 +63,53 @@ export default function AddMovie() {
     return url;
   };
 
+  const {
+    mutate: addItemMovies,
+    data,
+    isLoading,
+    isError,
+    error,
+    reset,
+  } = useMutation({
+    mutationFn: addMovies,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"]);
+      reset();
+      dispatch(setOpenPopup(false));
+    },
+    onError: (error) => {
+      console.error("Error creating post:", error);
+    },
+  });
+
   const onSubmit = async (values) => {
-    const { trangThai, Hot, ...rest } = values;
+    const { trangThai, hot, ...rest } = values;
     const newValues = {
       ...rest,
-      SapChieu: trangThai === "false",
-      DangChieu: trangThai === "true",
-      Hot: Hot === "true",
+      sapChieu: trangThai === "false",
+      dangChieu: trangThai === "true",
+      hot: hot === "true",
     };
+    console.log(newValues);
 
-    console.log("newValues", newValues);
+    console.log("hot", hot);
 
     const formData = new FormData();
     formData.append("tenPhim", newValues.tenPhim);
     formData.append("trailer", newValues.trailer);
     formData.append("moTa", newValues.moTa);
     formData.append("danhGia", newValues.danhGia);
-    formData.append("SapChieu", newValues.SapChieu);
-    formData.append("DangChieu", newValues.DangChieu);
+    formData.append("sapChieu", newValues.sapChieu);
+    formData.append("dangChieu", newValues.dangChieu);
     formData.append(
       "ngayKhoiChieu",
       format(newValues.ngayKhoiChieu, "dd/MM/yyyy")
     );
 
     formData.append("maNhom", newValues.maNhom);
-    formData.append("Hot", newValues.Hot);
-    if (newValues.hinhAnh) {
-      formData.append("hinhAnh", newValues.hinhAnh);
-    }
-    try {
-      const response = await api.post(
-        "/QuanLyPhim/ThemPhimUploadHinh",
-        formData
-      );
-      console.log("Upload thành công:", response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    formData.append("hot", newValues.hot);
+    formData.append("hinhAnh", newValues.hinhAnh);
+    // addItemMovies(formData);
   };
 
   return (
@@ -136,6 +177,11 @@ export default function AddMovie() {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Tên Phim..."
                       />
+                      {errors.tenPhim && (
+                        <span className="text-red-500 font-bold">
+                          {errors.tenPhim.message}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <label
@@ -150,6 +196,11 @@ export default function AddMovie() {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Flowbite"
                       />
+                      {errors.trailer && (
+                        <span className="text-red-500 font-bold">
+                          {errors.trailer.message}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <label
@@ -164,6 +215,11 @@ export default function AddMovie() {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Đánh giá"
                       />
+                      {errors.danhGia && (
+                        <span className="text-red-500 font-bold">
+                          {errors.danhGia.message}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -176,6 +232,11 @@ export default function AddMovie() {
                         placeholder="Write your thoughts here..."
                         defaultValue={""}
                       />
+                      {errors.moTa && (
+                        <span className="text-red-500 font-bold">
+                          {errors.moTa.message}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -200,19 +261,23 @@ export default function AddMovie() {
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="Select date"
                         />
+                        {errors.ngayKhoiChieu && (
+                          <span className="text-red-500 font-bold">
+                            {errors.ngayKhoiChieu.message}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-col space-y-3.5">
                       <label className="inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          defaultValue
+                          {...register("hot")}
                           className="sr-only peer"
-                          {...register("Hot")}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600" />
                         <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Hot
+                          hot
                         </span>
                       </label>
                       <label className="inline-flex flex-col cursor-pointer">
@@ -225,14 +290,10 @@ export default function AddMovie() {
                               type="radio"
                               {...register("trangThai")}
                               name="trangThai"
-                              defaultValue
-                              defaultChecked
+                              value="false"
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
-                            <label
-                              htmlFor="bordered-radio-1"
-                              className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
+                            <label className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                               Sắp Chiếu
                             </label>
                           </div>
@@ -241,13 +302,11 @@ export default function AddMovie() {
                               type="radio"
                               {...register("trangThai")}
                               name="trangThai"
-                              defaultValue
+                              defaultChecked
+                              value="true"
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
-                            <label
-                              htmlFor="bordered-radio-2"
-                              className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
+                            <label className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                               Đang Chiếu
                             </label>
                           </div>
@@ -273,6 +332,11 @@ export default function AddMovie() {
                         }}
                         className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                       />
+                      {errors.hinhAnh && (
+                        <span className="text-red-500 font-bold">
+                          {errors.hinhAnh.message}
+                        </span>
+                      )}
                     </div>
                     {hinhAnh && (
                       <div className="relative mt-6 w-[25rem] h-auto max-w-full rounded-lg">
@@ -306,7 +370,7 @@ export default function AddMovie() {
                   </div>
                   <button
                     type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Xác Nhận
                   </button>
