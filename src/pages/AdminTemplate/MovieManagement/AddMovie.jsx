@@ -8,6 +8,7 @@ import { addMovies } from "../../../service/admin.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Swal from "sweetalert2";
 
 const schema = z.object({
   tenPhim: z.string().nonempty("Vui lòng nhập thông tin"),
@@ -74,11 +75,19 @@ export default function AddMovie() {
     mutationFn: addMovies,
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
-      reset();
       dispatch(setOpenPopup(false));
+      Swal.fire({
+        title: "Đã thêm dữ liệu",
+        icon: "success",
+        draggable: true,
+      });
     },
     onError: (error) => {
-      console.error("Error creating post:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: ("Error creating post:", error),
+      });
     },
   });
 
@@ -90,7 +99,6 @@ export default function AddMovie() {
       dangChieu: trangThai === "true",
       hot: isChecked,
     };
-    console.log(newValues);
 
     const formData = new FormData();
     formData.append("tenPhim", newValues.tenPhim);
@@ -265,13 +273,13 @@ export default function AddMovie() {
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center me-4">
-                      <input type="checkbox" {...register("hot")} />
-                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Hot
-                      </label>
-                    </div>
                     <div className="flex flex-col space-y-3.5">
+                      <div>
+                        <input type="checkbox" {...register("hot")} />
+                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          Hot
+                        </label>
+                      </div>
                       <label className="inline-flex flex-col cursor-pointer">
                         <span className="text-sm mb-3.5 font-medium text-gray-900 dark:text-gray-300">
                           Tình Trạng

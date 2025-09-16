@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useState } from "react";
 import { deleteItem } from "../../../service/admin.api";
+import Swal from "sweetalert2";
 
 export default function MovieManagement() {
   const queryClient = useQueryClient();
@@ -42,7 +43,25 @@ export default function MovieManagement() {
     },
   });
   const handleDelete = (id) => {
-    deleteMutation(id);
+    Swal.fire({
+      title: "Bạn muốn xóa ?",
+      text: "Dữ liệu này sẽ bị xóa!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Thoát",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation(id);
+        Swal.fire({
+          title: "Dữ liệu đã bị xóa",
+          text: "Xóa thành công",
+          icon: "success",
+        });
+      }
+    });
   };
 
   return (
