@@ -38,20 +38,22 @@ export default function AddMovie() {
 
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
   const dispatch = useDispatch();
-  const { register, setValue, watch, handleSubmit, formState } = useForm({
-    defaultValues: {
-      tenPhim: "",
-      trailer: "",
-      moTa: "",
-      maNhom: "GP03",
-      ngayKhoiChieu: "",
-      trangThai: false,
-      hot: false,
-      danhGia: "",
-      hinhAnh: null,
-    },
-    resolver: zodResolver(schema),
-  });
+  const { register, setValue, watch, handleSubmit, reset, formState } = useForm(
+    {
+      defaultValues: {
+        tenPhim: "",
+        trailer: "",
+        moTa: "",
+        maNhom: "GP03",
+        ngayKhoiChieu: "",
+        trangThai: false,
+        hot: false,
+        danhGia: "",
+        hinhAnh: null,
+      },
+      resolver: zodResolver(schema),
+    }
+  );
 
   const errors = formState.errors;
 
@@ -70,7 +72,6 @@ export default function AddMovie() {
     isLoading,
     isError,
     error,
-    reset,
   } = useMutation({
     mutationFn: addMovies,
     onSuccess: () => {
@@ -115,6 +116,7 @@ export default function AddMovie() {
     formData.append("hot", newValues.hot);
     formData.append("hinhAnh", newValues.hinhAnh);
     addItemMovies(formData);
+    reset();
   };
 
   return (

@@ -64,6 +64,11 @@ export default function MovieManagement() {
     });
   };
 
+  const handleGetMovieAPI = (item) => {
+    console.log("maphim", item);
+    dispatch(setOpenPopup(true));
+  };
+
   return (
     <>
       <div className="p-4 lg:p-4 xl:p-4 border border-[#eee] rounded-xl shadow-sm ">
@@ -188,7 +193,10 @@ export default function MovieManagement() {
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-center gap-3">
                             <Eye className="text-blue-500 w-5 cursor-pointer hover:text-blue-800 transition-all duration-300" />
-                            <SquarePen className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300" />
+                            <SquarePen
+                              onClick={() => handleGetMovieAPI(item)}
+                              className="text-yellow-500 w-5 cursor-pointer hover:text-yellow-800 transition-all duration-300"
+                            />
                             <Trash2
                               onClick={() => handleDelete(item.maPhim)}
                               className="text-red-500 w-5 cursor-pointer hover:text-red-800 transition-all duration-300"
