@@ -10,10 +10,12 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { deleteItem } from "../../../service/admin.api";
 import Swal from "sweetalert2";
+import { getMovieByID } from "../../../store/auth.slice";
 
 export default function MovieManagement() {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+
   const [page, setPage] = useState(1);
   const limit = 10;
   const {
@@ -65,8 +67,8 @@ export default function MovieManagement() {
   };
 
   const handleGetMovieAPI = (item) => {
-    console.log("maphim", item);
     dispatch(setOpenPopup(true));
+    dispatch(getMovieByID(item));
   };
 
   return (
@@ -154,7 +156,7 @@ export default function MovieManagement() {
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-gray-500 text-center">
-                            {format(item.ngayKhoiChieu, "MM/dd/yyyy")}
+                            {format(item.ngayKhoiChieu, "dd/MM/yyyy")}
                           </p>
                         </td>
                         <td className="px-6 py-4">

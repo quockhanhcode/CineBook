@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
 
 const schema = z.object({
   tenPhim: z.string().nonempty("Vui lòng nhập thông tin"),
@@ -34,6 +35,7 @@ const schema = z.object({
 });
 
 export default function AddMovie() {
+  const { movieID } = useSelector((state) => state.authSlice);
   const queryClient = useQueryClient();
 
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
@@ -62,8 +64,13 @@ export default function AddMovie() {
 
   const previewImage = (file) => {
     if (!file) return "";
-    const url = URL.createObjectURL(file);
-    return url;
+    if (file instanceof File) {
+      return URL.createObjectURL(file);
+    }
+    if (typeof file === "string") {
+      return file;
+    }
+    return "";
   };
 
   const {
@@ -84,10 +91,11 @@ export default function AddMovie() {
       });
     },
     onError: (error) => {
+      console.log(error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: ("Error creating post:", error),
+        text: `Error: ${error?.message || "Something went wrong"}`,
       });
     },
   });
@@ -118,6 +126,23 @@ export default function AddMovie() {
     addItemMovies(formData);
     reset();
   };
+
+  // update
+  const movieToForm = (movie) => ({
+    tenPhim: movie.tenPhim || "",
+    trailer: movie.trailer || "",
+    hinhAnh: movie.hinhAnh || "",
+    moTa: movie.moTa || "",
+    ngayKhoiChieu: movie.ngayKhoiChieu ? movie.ngayKhoiChieu.split("T")[0] : "",
+    danhGia: movie.danhGia || "",
+    hot: movie.hot,
+    trangThai: movie.dangChieu ? "true" : "false",
+  });
+  useEffect(() => {
+    if (movieID) {
+      reset(movieToForm(movieID));
+    }
+  }, [movieID, reset]);
 
   return (
     <div>
@@ -167,7 +192,7 @@ export default function AddMovie() {
                       <input
                         {...register("maNhom")}
                         disabled
-                        placeholder="GP01"
+                        placeholder="GP03"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
                     </div>
@@ -341,7 +366,7 @@ export default function AddMovie() {
                       )}
                     </div>
                     {hinhAnh && (
-                      <div className="relative mt-6 w-[25rem] h-auto max-w-full rounded-lg">
+                      <div className="relative mt-6 w-[15rem] h-auto max-w-full rounded-lg">
                         <img
                           src={previewImage(hinhAnh)}
                           className="w-full h-full"

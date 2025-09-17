@@ -6,7 +6,6 @@ export const addMovies = async (dataMovie) => {
       "/QuanLyPhim/ThemPhimUploadHinh",
       dataMovie
     );
-
     return response.data.content;
   } catch (error) {
     console.log(error);
