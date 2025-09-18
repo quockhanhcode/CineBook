@@ -161,7 +161,7 @@ export default function MovieManagement() {
                         </td>
                         <td className="px-6 py-4">
                           <span
-                            className={` text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto ${
+                            className={`whitespace-nowrap text-xs font-medium px-2.5 py-0.5 rounded-full block w-fit mx-auto ${
                               item.dangChieu === true
                                 ? "bg-green-100 text-green-800"
                                 : "bg-[#FCB53B] text-white"

@@ -21,3 +21,13 @@ export const deleteItem = async (id) => {
     console.log(error);
   }
 };
+
+export const updateMovies = async (item) => {
+  try {
+    const response = await api.delete("/QuanLyPhim/CapNhatPhimUpload", item);
+
+    return response.data.content;
+  } catch (error) {
+    console.log(error);
+  }
+};
