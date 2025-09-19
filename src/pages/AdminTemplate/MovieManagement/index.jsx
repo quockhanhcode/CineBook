@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { deleteItem } from "../../../service/admin.api";
 import Swal from "sweetalert2";
-import { getMovieByID } from "../../../store/auth.slice";
+import { getButtonEdit, getMovieByID } from "../../../store/auth.slice";
 
 export default function MovieManagement() {
   const queryClient = useQueryClient();
@@ -69,6 +69,12 @@ export default function MovieManagement() {
   const handleGetMovieAPI = (item) => {
     dispatch(setOpenPopup(true));
     dispatch(getMovieByID(item));
+    dispatch(getButtonEdit(false));
+  };
+
+  const handleAddButton = () => {
+    dispatch(setOpenPopup(true));
+    dispatch(getButtonEdit(true));
   };
 
   return (
@@ -88,7 +94,7 @@ export default function MovieManagement() {
             </div>
           </div>
           <button
-            onClick={() => dispatch(setOpenPopup(true))}
+            onClick={() => handleAddButton()}
             className="flex items-center gap-1 text-white bg-[var(--mainColor)] font-semibold h-full p-2 md:px-3 rounded-md cursor-pointer hover:bg-white hover:text-[var(--mainColor)] hover:shadow-[0_0_10px_#e396c1] transition-all duration-300"
           >
             <Plus className="w-5 h-5" />

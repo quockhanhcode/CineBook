@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOpenPopup } from "../../../store/homeSlice";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { useForm } from "react-hook-form";
-import { addMovies } from "../../../service/admin.api";
+import { addMovies, updateMovies } from "../../../service/admin.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,6 +36,8 @@ const schema = z.object({
 
 export default function AddMovie() {
   const { movieID } = useSelector((state) => state.authSlice);
+  const { statusBtn } = useSelector((state) => state.authSlice);
+
   const queryClient = useQueryClient();
 
   const { isOpenPopup } = useSelector((state) => state.homeSlice);
@@ -100,6 +102,23 @@ export default function AddMovie() {
     },
   });
 
+  const {
+    mutate: editMovie,
+    isLoading: isLoadingUpdate,
+    isError: isErrorUpdate,
+    isSuccess: isSuccessUpdate,
+    data: dataUpdate,
+    error: errorUpdate,
+  } = useMutation({
+    mutationFn: updateMovies,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"]);
+    },
+    onError: (err) => {
+      console.error("Error creating post:", err);
+    },
+  });
+
   const onSubmit = async (values) => {
     const { trangThai, hot, ...rest } = values;
     const newValues = {
@@ -123,12 +142,25 @@ export default function AddMovie() {
     formData.append("maNhom", newValues.maNhom);
     formData.append("hot", newValues.hot);
     formData.append("hinhAnh", newValues.hinhAnh);
-    addItemMovies(formData);
-    reset();
+    if (statusBtn) {
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      addItemMovies(formData);
+      reset();
+    } else {
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      editMovie(formData);
+      reset();
+    }
   };
 
   // update
   const movieToForm = (movie) => ({
+    maPhim: movie.maPhim || "",
+    maNhom: movie.maNhom || "",
     tenPhim: movie.tenPhim || "",
     trailer: movie.trailer || "",
     hinhAnh: movie.hinhAnh || "",
@@ -329,7 +361,6 @@ export default function AddMovie() {
                               type="radio"
                               {...register("trangThai")}
                               name="trangThai"
-                              defaultChecked
                               value="true"
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             />
@@ -395,18 +426,21 @@ export default function AddMovie() {
                       </div>
                     )}
                   </div>
-                  <button
-                    type="submit"
-                    className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Xác Nhận
-                  </button>
-                  <button
-                    type="submit"
-                    className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Cập Nhật
-                  </button>
+                  {statusBtn === true ? (
+                    <button
+                      type="submit"
+                      className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                      Xác Nhận
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                      Cập Nhật
+                    </button>
+                  )}
                 </form>
               </div>
             </DialogPanel>

@@ -1,6 +1,7 @@
 import axios from "axios";
 const api = axios.create({
   baseURL: "https://movienew.cybersoft.edu.vn/api/",
+  // baseURL: "/api",
 });
 
 // Add a request interceptor
