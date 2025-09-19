@@ -25,7 +25,7 @@ export default function MovieManagement() {
     error: errorMovies,
   } = useQuery({
     queryKey: ["listMovie", page],
-    queryFn: () => getListMovieApi("GP03", page, limit),
+    queryFn: () => getListMovieApi("GP04", page, limit),
     keepPreviousData: true,
   });
 

@@ -48,7 +48,7 @@ export default function AddMovie() {
         tenPhim: "",
         trailer: "",
         moTa: "",
-        maNhom: "GP03",
+        maNhom: "GP04",
         ngayKhoiChieu: "",
         trangThai: false,
         hot: false,
@@ -120,38 +120,55 @@ export default function AddMovie() {
   });
 
   const onSubmit = async (values) => {
-    const { trangThai, hot, ...rest } = values;
+    const { trangThai, hot, maPhim, ...rest } = values;
     const newValues = {
       ...rest,
+      maPhim: values.maPhim,
       sapChieu: trangThai === "false",
       dangChieu: trangThai === "true",
       hot: isChecked,
     };
 
     const formData = new FormData();
-    formData.append("tenPhim", newValues.tenPhim);
-    formData.append("trailer", newValues.trailer);
-    formData.append("moTa", newValues.moTa);
-    formData.append("danhGia", newValues.danhGia);
-    formData.append("sapChieu", newValues.sapChieu);
-    formData.append("dangChieu", newValues.dangChieu);
-    formData.append(
-      "ngayKhoiChieu",
-      format(newValues.ngayKhoiChieu, "dd/MM/yyyy")
-    );
-    formData.append("maNhom", newValues.maNhom);
-    formData.append("hot", newValues.hot);
-    formData.append("hinhAnh", newValues.hinhAnh);
+    // formData.append("tenPhim", newValues.tenPhim);
+    // formData.append("trailer", newValues.trailer);
+    // formData.append("moTa", newValues.moTa);
+    // formData.append("danhGia", newValues.danhGia);
+    // formData.append("sapChieu", newValues.sapChieu);
+    // formData.append("dangChieu", newValues.dangChieu);
+    // formData.append(
+    //   "ngayKhoiChieu",
+    //   format(newValues.ngayKhoiChieu, "dd/MM/yyyy")
+    // );
+    // formData.append("maNhom", newValues.maNhom);
+    // formData.append("hot", newValues.hot);
+    // formData.append("hinhAnh", newValues.hinhAnh);
+    const formField = [
+      ["maPhim", newValues.maPhim],
+      ["tenPhim", newValues.tenPhim],
+      ["trailer", newValues.trailer],
+      ["moTa", newValues.moTa],
+      ["danhGia", newValues.danhGia],
+      ["sapChieu", newValues.sapChieu],
+      ["dangChieu", newValues.dangChieu],
+      ["ngayKhoiChieu", format(newValues.ngayKhoiChieu, "dd/MM/yyyy")],
+      ["maNhom", newValues.maNhom],
+      ["hot", newValues.hot],
+      ["hinhAnh", newValues.hinhAnh],
+    ];
+    formField.forEach(([key, values]) => {
+      formData.append(key, values);
+    });
     if (statusBtn) {
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value);
+      // }
       addItemMovies(formData);
       reset();
     } else {
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value);
+      // }
       editMovie(formData);
       reset();
     }

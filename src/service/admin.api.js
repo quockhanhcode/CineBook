@@ -25,7 +25,7 @@ export const deleteItem = async (id) => {
 export const updateMovies = async (item) => {
   try {
     const response = await api.post("/QuanLyPhim/CapNhatPhimUpload", item);
-    return response.data.content;
+    return response.data;
   } catch (error) {
     console.log(error);
   }
