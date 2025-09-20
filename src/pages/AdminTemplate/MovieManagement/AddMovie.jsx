@@ -26,11 +26,16 @@ const schema = z.object({
     .max(500, "Nội dung vượt quá kí tự"),
   ngayKhoiChieu: z.string().nonempty("Không được bỏ trống"),
   trangThai: z.string().optional(),
-  maNhom: z.string().optional("GP03"),
-  danhGia: z
-    .string()
-    .nonempty("Không được bỏ trống")
-    .regex(/^(10|[1-9])$/gm, "Nhập đúng định dạng"),
+  maNhom: z.string().optional("GP04"),
+  danhGia: z.string().regex(/^(10|[1-9])$/, "Nhập đúng định dạng"),
+  // danhGia: z
+  //   .number({
+  //     required_error: "Vui lòng nhập điểm",
+  //     invalid_type_error: "Phải là số",
+  //   })
+  //   .min(0, "Điểm phải >= 0")
+  //   .max(10, "Điểm phải <= 10"),
+
   hinhAnh: z.any(),
 });
 
@@ -45,6 +50,7 @@ export default function AddMovie() {
   const { register, setValue, watch, handleSubmit, reset, formState } = useForm(
     {
       defaultValues: {
+        maPhim: null,
         tenPhim: "",
         trailer: "",
         moTa: "",
@@ -120,10 +126,9 @@ export default function AddMovie() {
   });
 
   const onSubmit = async (values) => {
-    const { trangThai, hot, maPhim, ...rest } = values;
+    const { trangThai, hot, ...rest } = values;
     const newValues = {
       ...rest,
-      maPhim: values.maPhim,
       sapChieu: trangThai === "false",
       dangChieu: trangThai === "true",
       hot: isChecked,
@@ -190,6 +195,7 @@ export default function AddMovie() {
   useEffect(() => {
     if (movieID) {
       reset(movieToForm(movieID));
+      console.log("maPhim trong Redux:", movieID.maPhim);
     }
   }, [movieID, reset]);
 
@@ -231,6 +237,24 @@ export default function AddMovie() {
               <div className="p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="grid gap-6 mb-6 md:grid-cols-2">
+                    {movieID?.maPhim ? (
+                      <div>
+                        <label
+                          htmlFor="visitors"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Mã Phim
+                        </label>
+                        <input
+                          {...register("maPhim")}
+                          disabled
+                          placeholder="..."
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     <div>
                       <label
                         htmlFor="visitors"
@@ -241,7 +265,7 @@ export default function AddMovie() {
                       <input
                         {...register("maNhom")}
                         disabled
-                        placeholder="GP03"
+                        placeholder="GP04"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
                     </div>
@@ -296,9 +320,9 @@ export default function AddMovie() {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Đánh giá"
                       />
-                      {errors.danhGia && (
+                      {errors?.danhGia && (
                         <span className="text-red-500 font-bold">
-                          {errors.danhGia.message}
+                          {errors?.danhGia?.message}
                         </span>
                       )}
                     </div>
